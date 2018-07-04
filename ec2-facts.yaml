@@ -1,0 +1,12 @@
+--- # AWS EC2
+- hosts: aws
+  remote_user: avinash
+  become_method: sudo
+  gather_facts: yes
+  connection: ssh
+  tasks:
+  - name: Gather facts of running
+    action: ec2_metadata_facts
+  - name: Dsiplay instance type
+    debug: msg="This instance is"
+    when: ansible_ec2_instance_type == 't2.micro'

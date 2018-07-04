@@ -1,0 +1,17 @@
+--- # EC2 Module
+- hosts: local
+  connection: local
+  remote_user: avinash
+  become: yes
+  gather_facts: no
+  vars_files:
+  - ../files/awscreds.yml
+  tasks:
+  - name: Start stop instance
+    ec2:
+      aws_access_key: "{{ aws_key }}"
+      aws_secret_key: "{{ aws_secret }}"
+      region: ap-south-1
+      instance_ids: i-027bf4b92c0abca01
+      state: running
+ 

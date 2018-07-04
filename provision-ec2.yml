@@ -1,0 +1,17 @@
+--- # provision ec2 instances
+- hosts: local
+  become: yes
+  gather_facts: no
+  connection: local
+  remote_user: avinash
+  vars_files:
+  - ../files/awscreds.yml
+  tasks: 
+  - name: Provision
+    ec2:
+        aws_access_key: "{{ aws_key }}"
+        aws_secret_key: "{{  aws_secret }}"
+        region: ap-south-1
+        image: ami-531a4c3c 
+        instance_type: t2.micro
+        count: 2

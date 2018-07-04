@@ -1,0 +1,23 @@
+--- # provision ec2 instances
+- hosts: local
+  become: yes
+  gather_facts: no
+  connection: local
+  remote_user: avinash
+  vars_files:
+  - ../files/awscreds.yml
+  tasks: 
+  - name: Find AMI
+    ec2_ami_find:
+        aws_access_key: "{{ aws_key }}"
+        aws_secret_key: "{{  aws_secret }}"
+        region: ap-south-1
+        owner: self
+        ami_tags:
+          Name: MyTaggedAMI
+        no_result_action: fail
+    register: ami_find
+  - debug: msg={{ ami_find.results[0].ami_id  }}
+ 
+  
+          

@@ -1,0 +1,12 @@
+--- # AWS EC2
+- hosts: aws
+  remote_user: avinash
+  become_method: sudo
+  gather_facts: yes
+  connection: ssh
+  tasks:
+  - name: Execute shell
+    shell: ls -al ~
+    register: result
+  - name: Dsiplay in JSON
+    debug: var=result    

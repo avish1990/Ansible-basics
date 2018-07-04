@@ -1,0 +1,17 @@
+--- # EC2 Module
+- hosts: local
+  connection: local
+  remote_user: avinash
+  become: yes
+  gather_facts: no
+  vars_files:
+  - ../files/awscreds.yml
+  tasks:
+  - name: Create a new key
+    ec2_key:
+      aws_access_key: "{{ aws_key }}"
+      aws_secret_key: "{{ aws_secret }}"
+      name: mykeypair
+      region: ap-south-1
+      state: absent
+ 

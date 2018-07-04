@@ -1,0 +1,21 @@
+--- #  INstalls HTTPD on test group 
+- hosts: test
+  remote_user: avinash
+  become: yes
+  become_method: sudo
+  connection: ssh
+  gather_facts: yes
+  vars:
+    username: myuser
+  tasks:
+  - name: Install HTTPD
+    yum:
+      name: httpd
+      state: latest
+    notify:
+    -  startservice
+  handlers:
+  - name: startservice
+    service:
+      name: httpd
+      state: restarted

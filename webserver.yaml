@@ -1,0 +1,65 @@
+--- # This playbook will create a webserver and do other stuff
+- hosts: local
+  become: sudo
+  connection: local
+  remote_user: avinash
+  gather_facts: no
+  vars_files:
+  - ../files/awscreds.yml
+  tasks:
+  - name: Manage state of EC2 instance
+    ec2:
+      aws_access_key: "{{ aws_key }}"
+      aws_secret_key: "{{ aws_secret }}"
+      region: ap-south-1
+      instance_ids: i-027bf4b92c0abca01
+      state: running
+
+
+- hosts: aws
+  remote_user: root
+  become_method: sudo
+  gather_facts: yes
+  connection: ssh
+  tasks:
+  - name: Install HTTPD
+    yum: name=httpd state=latest
+  - name: Deploy static website
+    copy: src=../files/index.html dest=/var/www/html/index.html owner=root group=root mode=0655 backup=yes
+  - name: Restart the service.
+    service: name=httpd state=restarted
+  - name: wait for the HTTP port 80 to be listening.
+    wait_for: host=localhost port=80 delay=5
+  - name: Install wget.
+    yum: name=wget state=latest
+  - name: Test the site
+    shell: /usr/bin/wget http://localhost
+    register: site_result
+  - name: Display the site output
+    debug: var=site_result
+
+  
+- hosts: aws
+  become: sudo
+  connection: ssh
+  remote_user: avinash
+  gather_facts: yes
+  vars_files:
+  - ../files/awscreds.yml
+  tasks:
+  - name: Create Snapshot
+    ec2_snapshot:
+      aws_access_key: "{{ aws_key }}"
+      aws_secret_key: "{{ aws_secret }}"
+      region: ap-south-1
+      instance_id: i-027bf4b92c0abca01
+      device_name: /dev/sda1
+      description: Delete this snapshot
+      wait: no
+    register: snapshot_result
+  - name: Display result
+    debug: var=snapshot_result
+  
+
+
+
